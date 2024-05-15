@@ -17,6 +17,7 @@ struct pst{
         else t[me].r = push(t[node].r,mid+1,e,p,v);
         return me;
     }
+    // (t2, t1] query
     int find_kth(int t1,int t2,int s,int e,int k){
         if(s==e) return s;
         int mid = s+e>>1;
@@ -32,6 +33,9 @@ struct pst{
     }
     int find_kth(int t1,int t2,int k){
         return find_kth(rt[t1],rt[t2],1,MAX,k);
+    }
+    ll sum(int t1,int t2,int l,int r){
+        return sum(rt[t1],rt[t2],1,MAX,l,r);
     }
     void insert(int p,ll v){
         rt.push_back(push(rt[top++],1,MAX,p,v));
