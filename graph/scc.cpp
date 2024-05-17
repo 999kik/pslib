@@ -5,10 +5,8 @@ struct SCC{
         n = x;
         E = R = vector<vector<int>>(x+1);
         for(int i = 1;i<=n;i++) {
-            for(int j : e[i]) {
-                E[i].push_back(j);
-                R[j].push_back(i);
-            }
+            E[i] = e[i];
+            for(int j : e[i]) R[j].push_back(i);
         }
     }
     vector<int> ck, st, scc;
@@ -28,4 +26,3 @@ struct SCC{
         reverse(st.begin(),st.end());
         for(int i : st) if(!scc[i]) g(i,++siz);
     }
-};
