@@ -26,3 +26,4 @@ struct SCC{
         reverse(st.begin(),st.end());
         for(int i : st) if(!scc[i]) g(i,++siz);
     }
+};
