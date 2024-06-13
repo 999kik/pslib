@@ -1,10 +1,8 @@
 vector<pii> E[MXN]; // idx
 int num[MXN], low[MXN], t;
-int dep[MXN];
 vector<int> bcc[MXN];
 void dfs(int x,int p){
     num[x] = low[x] = ++t;
-    dep[x] = dep[p]+1;
     int lo = t;
     for(auto [i,w] : E[x]) if(i^p) {
         if(!num[i]) dfs(i,x);
