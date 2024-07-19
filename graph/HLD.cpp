@@ -33,7 +33,7 @@ int lca(int a,int b){
 void lca_query(int a,int b){
     while(ind[a]^ind[b]){
         if(h[ind[a]]<h[ind[b]]) swap(a,b);
-        vector<int> v = query(pos[head(a)],pos[a]);
+        query(pos[head(a)],pos[a]);
         a = par[head(a)];
     }
     if(pos[a]>pos[b]) swap(a,b);
