@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+using namespace std;
+using pii = pair<int,int>;
+struct dynamic_seg{
+    vector<int> t, L, R;
+    int make(){
+        t.push_back(0);
+        L.push_back(-1), R.push_back(-1);
+        return t.size()-1;
+    }
+    void upd(int x,int s,int e,int p,int v){
+        if(s==e) {
+            t[p] += v;
+            return;
+        }
+        int mid = s+e>>1;
+        if(p<=mid) {
+            if(L[x]==-1) L[x] = make();
+            upd(L[x],s,mid,p,v);
+        }
+        else {
+            if(R[x]==-1) R[x] = make();
+            upd(R[x],mid+1,e,p,v);
+        }
+        t[x] = 0;
+        if(L[x]!=-1) t[x] = max(t[x],t[L[x]]);
+        if(R[x]!=-1) t[x] = max(t[x],t[R[x]]);
+    }
+    int query(int x,int s,int e,int l,int r){
+        if(x<0) return 0;
+        if(l<=s && e<=r) return t[x];
+        if(e<l || r<s) return 0;
+        int mid = s+e>>1;
+        return max(query(L[x],s,mid,l,r),query(R[x],mid+1,e,l,r));
+    }
+    void get_value(int x,int s,int e,vector<pii> &r){
+        if(x<0) return;
+        if(s==e) {
+            r.push_back({s,t[x]});
+            return;
+        }
+        int mid = s+e>>1;
+        get_value(L[x],s,mid,r), get_value(R[x],mid+1,e,r);
+    }
+};
