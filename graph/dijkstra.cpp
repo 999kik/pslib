@@ -1,7 +1,7 @@
 struct dijkstra{
     const ll inf = 1LL<<62;
     vector<ll> d;
-    void run(int s,int sz,vector<pii> &E){
+    void run(int s,int sz,vector<pii> *E){
         d.assign(sz+1,inf);
         priority_queue<pair<ll,int>> pq;
         d[s] = 0; pq.push({0,s});
