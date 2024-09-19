@@ -1,6 +1,6 @@
 void build(string S,vector<int> &sa,vector<int> &lcp){
     int n= S.size();
-    sa = lcp = vector<int>(n+1);
+    sa = lcp = vector<int>(n);
     iota(sa.begin(),sa.end(),0);
     vector<int> g(n);
     for(int i=0;i<n;i++) g[i] = S[i];
