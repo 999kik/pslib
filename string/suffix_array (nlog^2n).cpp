@@ -10,7 +10,7 @@ void build(string S,vector<int> &sa,vector<int> &lcp){
         };
         sort(sa.begin(),sa.end(),cmp);
         vector<int> ng(n);
-        ng[sa[0]] = 0;
+        ng[sa[0]] = 1;
         for(int i=1;i<n;i++) ng[sa[i]] = ng[sa[i-1]]+cmp(sa[i-1],sa[i]);
         g = ng;
     }
