@@ -1,6 +1,6 @@
 using pii = pair<int,int>;
 struct MCMF{
-    const int SZ = 600;
+    static const int SZ = 600;
     int s, t; //source, sink
     struct Edge{ int v, c, d, dual; };
     vector<Edge> g[SZ];
