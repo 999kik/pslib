@@ -56,5 +56,6 @@ struct DINIC{
                 ans += c;
             }
         }
+        return ans;
     }
 };
