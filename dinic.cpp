@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 struct DINIC{
     struct EDGE {
         int v, c, r;
@@ -12,8 +9,8 @@ struct DINIC{
     int w[MAXN], lvl[MAXN];
     int S, E;
     void addedge(int a, int b, int c) {
-        ed[a].push_back({b, c, ed[b].size()});
-        ed[b].push_back({a, 0, ed[a].size() - 1});
+        ed[a].push_back({b, c, (int)ed[b].size()});
+        ed[b].push_back({a, 0, (int)ed[a].size() - 1});
     }
     bool bfs() {
         memset(lvl, 0, sizeof(lvl));
