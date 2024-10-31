@@ -6,3 +6,8 @@ ll pw(ll a,ll b){
     }
     return r;
 }
+
+ll pw(ll a,ll b){
+    ll r = b?pw(a,b/2):1;
+    return (r*r%mod*(b%2?a:1))%mod;
+}
