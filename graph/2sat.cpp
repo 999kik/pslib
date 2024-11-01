@@ -17,12 +17,14 @@ struct sat_2{
         scc[x] = id;
         for(int i : R[x]) if(!scc[i]) g(i,id);
     }
-    void build(){
+    int build(){
         scc = ck = vector<int>(n+1,0);
         for(int i = 1;i<=n;i++) if(!ck[i]) f(i);
         reverse(st.begin(),st.end());
         int cnt = 0;
         for(int i : st) if(!scc[i]) g(i,++cnt);
+        for(int i=1;i<=hn;i++) if(scc[i]==scc[i+hn]) return 0;
+        return 1;
     }
     void ins(int a,int b){
         if(a<0) a = hn-a;
