@@ -11,8 +11,7 @@ struct coor{
 struct coor{
     vector<ll> X;
     coor(vector<ll> A){
-        X = A;
-        sort(X.begin(),X.end());
+        X = A; sort(X.begin(),X.end());
         X.erase(unique(X.begin(),X.end()),X.end());
     };
     int operator[](int x){
