@@ -1,12 +1,13 @@
+using pii = pair<int,int>;
 struct dijkstra{
-    const ll inf = 1LL<<62;
-    vector<ll> d;
+    const int inf = 1e9;
+    vector<int> d;
     void run(int s,int sz,vector<pii> *E){
         d.assign(sz+1,inf);
-        priority_queue<pair<ll,int>> pq;
+        priority_queue<pii> pq;
         d[s] = 0; pq.push({0,s});
         for(;pq.size();){
-            int x = pq.top().second; ll dist = -pq.top().first;
+            auto [dist,x] = pq.top(); dist *= -1;
             pq.pop();
             if(d[x]<dist) continue;
             for(auto &[i,w] : E[x]) if(d[i]>dist+w){
