@@ -14,7 +14,5 @@ struct coor{
         X = A; sort(X.begin(),X.end());
         X.erase(unique(X.begin(),X.end()),X.end());
     };
-    int operator[](int x){
-        return lower_bound(X.begin(),X.end(),x)-X.begin();
-    }
+    int operator[](int x){return lower_bound(X.begin(),X.end(),x)-X.begin();}
 };
