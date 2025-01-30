@@ -4,5 +4,5 @@ ll pw(ll a,ll b){
     return r*r%mod*(b%2?a:1)%mod;
 }
 ll C(int n,int k){
-    return fect[n]*pw(fect[k],mod-2)%mod*pw(fect[n-k],mod-2)%mod;
+    return fact[n]*pw(fact[k],mod-2)%mod*pw(fact[n-k],mod-2)%mod;
 }
