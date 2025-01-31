@@ -17,13 +17,14 @@ struct sat_2{
         scc[x] = id;
         for(int i : R[x]) if(!scc[i]) g(i,id);
     }
-    int build(){
-        scc = ck = vector<int>(n+1,0);
+    int build(vector<int> &res){
+        res = scc = ck = vector<int>(n+1,0);
         for(int i = 1;i<=n;i++) if(!ck[i]) f(i);
         reverse(st.begin(),st.end());
         int cnt = 0;
         for(int i : st) if(!scc[i]) g(i,++cnt);
         for(int i=1;i<=hn;i++) if(scc[i]==scc[i+hn]) return 0;
+        for(int i=1;i<=hn;i++) res[i] = scc[i]<scc[i+hn]; // not : 1
         return 1;
     }
     void ins(int a,int b){
@@ -34,6 +35,10 @@ struct sat_2{
     }
     void OR(int a,int b){
         ins(-a,b); ins(-b,a);
+    }
+    void same(int a,int b){
+        ins(a,b), ins(b,a);
+        ins(-a,-b), ins(-b,-a);
     }
     void XOR(int a,int b){
         OR(a,b); OR(-a,-b);
