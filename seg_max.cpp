@@ -1,6 +1,6 @@
 struct SEG{
     vector<int> t; int n;
-    SEG(int x){n=x;t.assign(2*n+1,0);}
+    SEG(int x):n(x),t(2*x+1,0){}
     void upd(int p,int v){
         for(t[p+=n-1]=v;p>1;p>>=1) t[p>>1] = max(t[p],t[p^1]);
     }
