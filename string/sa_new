@@ -1,0 +1,185 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+struct HASH {
+    deque<ll> suf; 
+    vector<ll> pwr;
+    const int base, mod;
+    HASH(int b,int m):base(b),mod(m){ suf.push_back(0); pwr.push_back(1); }
+
+    void push_front(char c){
+        ll h = ((ll)c + suf.front()*base)%mod;
+        suf.push_front(h);
+        pwr.push_back(pwr.back()*base%mod);
+    }
+    void pop_front(){
+        if(suf.size()>1){ suf.pop_front(); pwr.pop_back(); }
+    }
+    ll get(int l,int r)const{
+        ll v = suf[l] - suf[r+1]*pwr[r-l+1]%mod;
+        return (v+mod)%mod;
+    }
+};
+struct Splay {
+    struct Node{
+        Node *ch[2]{},*p{};
+        int idx,sz=1;
+        int lcp_prev=INT_MAX,min_lcp=INT_MAX;
+        int tag=0;
+        explicit Node(int i):idx(i){}
+    };
+    Node* root=nullptr;
+    HASH &H; deque<char> &S;
+
+    Splay(HASH& h,deque<char>& s):H(h),S(s){}
+
+    void apply(Node* x,int v){ if(x){ x->idx+=v; x->tag+=v; } }
+    void push(Node* x){
+        if(x&&x->tag){
+            apply(x->ch[0],x->tag);
+            apply(x->ch[1],x->tag);
+            x->tag=0;
+        }
+    }
+    void pull(Node* x){
+        x->sz=1; x->min_lcp=x->lcp_prev;
+        for(int d=0;d<2;++d) if(x->ch[d]){
+            x->sz+=x->ch[d]->sz;
+            x->min_lcp=min(x->min_lcp,x->ch[d]->min_lcp);
+        }
+    }
+    void rot(Node* x){
+        Node* p=x->p; push(p); push(x);
+        bool d = (p->ch[1]==x);
+        Node* b = x->ch[!d];
+        if(b) b->p=p;
+        p->ch[d]=b;
+        x->p=p->p;
+        if(p->p){
+            if(p->p->ch[0]==p) p->p->ch[0]=x;
+            else               p->p->ch[1]=x;
+        }
+        x->ch[!d]=p; p->p=x;
+        pull(p); pull(x);
+    }
+    void splay(Node* x,Node* to=nullptr){
+        if(!x) return;
+        while(x->p!=to){
+            Node* p=x->p; Node* g=p->p;
+            if(g!=to && ((g->ch[0]==p)==(p->ch[0]==x))) rot(p);
+            rot(x);
+        }
+        if(!to) root=x;
+    }
+
+    Node* kth(Node* x,int k){
+        while(x){
+            push(x);
+            int l=x->ch[0]?x->ch[0]->sz:0;
+            if(k==l+1) return x;
+            x=(k<=l)?x->ch[0]:x->ch[1], k=(k<=l)?k:k-l-1;
+        }
+        return nullptr;
+    }
+    Node* kth(int k){ Node* t=kth(root,k); if(t) splay(t); return t; }
+    Node* pred(Node* x){ push(x); x=x->ch[0];
+        while(x){ push(x); if(!x->ch[1]) break; x=x->ch[1]; } return x; }
+    Node* succ(Node* x){ push(x); x=x->ch[1];
+        while(x){ push(x); if(!x->ch[0]) break; x=x->ch[0]; } return x; }
+    void update_up(Node* x){ while(x){ pull(x); x=x->p; } }
+
+    int lcp(int a,int b){
+        int n=S.size(), lo=0, hi=min(n-a,n-b);
+        while(lo<hi){
+            int mid=(lo+hi+1)>>1;
+            if(H.get(a,a+mid-1)==H.get(b,b+mid-1)) lo=mid;
+            else hi=mid-1;
+        }
+        return lo;
+    }
+    bool cmp(int i,int j){
+        int L=lcp(i,j), n=S.size();
+        if(i+L==n||j+L==n) return i+L==n && j+L!=n;
+        return S[i+L] < S[j+L];
+    }
+
+    pair<Node*,int> locate(int idx){
+        Node* cur=root,*par=nullptr; int dir=0;
+        while(cur){
+            push(cur); par=cur;
+            if(cmp(idx,cur->idx)){ dir=0; cur=cur->ch[0]; }
+            else                 { dir=1; cur=cur->ch[1]; }
+        }
+        return {par,dir};
+    }
+    void insert(int idx){
+        auto [par,dir]=locate(idx);
+        Node* nd=new Node(idx);
+        if(!par) root=nd;
+        else{ par->ch[dir]=nd; nd->p=par; }
+        splay(nd);
+
+        Node* p=pred(nd);
+        if(p) nd->lcp_prev=lcp(p->idx,nd->idx);
+        Node* s=succ(nd);
+        if(s){ s->lcp_prev=lcp(nd->idx,s->idx); update_up(s); }
+
+        pull(nd);
+    }
+
+    void erase_zero(){
+        Node* cur=root;
+        while(cur){
+            push(cur);
+            if(cur->idx==0) break;
+            cur = cmp(0,cur->idx) ? cur->ch[0] : cur->ch[1];
+        }
+        if(!cur) return;
+        splay(cur);
+
+        Node* p=pred(cur);
+        Node* s=succ(cur);
+        if(s){
+            s->lcp_prev = p? lcp(p->idx,s->idx) : INT_MAX;
+            update_up(s);
+        }
+
+        Node* L=cur->ch[0]; Node* R=cur->ch[1];
+        if(L) L->p=nullptr;
+        if(R) R->p=nullptr;
+        delete cur;
+        if(!L) root=R;
+        else{
+            Node* x=L;
+            while(true){ push(x); if(!x->ch[1]) break; x=x->ch[1]; }
+            splay(x);
+            x->ch[1]=R; if(R) R->p=x;
+            pull(x); root=x;
+        }
+    }
+
+    void push_front(char c){
+        S.push_front(c); H.push_front(c);
+        apply(root,1);
+        insert(0);
+    }
+    void pop_front(){
+        if(S.empty()) return;
+        S.pop_front(); H.pop_front();
+        erase_zero();
+        apply(root,-1);
+    }
+    int operator[](int k){
+        Node* t=kth(k); return t?t->idx:-1;
+    }
+    int lcp_range(int i,int j){
+        if(i==j) return (int)S.size()-(*this)[i];
+        if(i>j) swap(i,j);
+        Node* a=kth(i); Node* b=kth(j);
+        splay(a); splay(b,a);
+        int res=b->lcp_prev;
+        if(b->ch[0]) res=min(res,b->ch[0]->min_lcp);
+        return res;
+    }
+};
