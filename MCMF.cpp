@@ -4,7 +4,7 @@ struct MCMF{
     int s, t; //source, sink
     struct Edge{ int v, c, d, dual; };
     vector<Edge> g[SZ];
-    void add(int s, int e, int c, int d){
+    void add(int s, int e, int c, int d){ // cost, flow
         g[s].push_back({e, c, d, (int)g[e].size()});
         g[e].push_back({s, 0, -d, (int)g[s].size()-1});
     }
