@@ -1,17 +1,17 @@
 using pii = pair<int,int>;
 struct MCMF{
-    static const int SZ = 600;
+    static const int SZ = 7505;
+    static const int inf = 3e9;
     int s, t; //source, sink
     struct Edge{ int v, c, d, dual; };
     vector<Edge> g[SZ];
-    void add(int s, int e, int c, int d){ //s->e flow, cost
+    void add(int s, int e, int c, int d){ // cost, flow
         g[s].push_back({e, c, d, (int)g[e].size()});
         g[e].push_back({s, 0, -d, (int)g[s].size()-1});
     }
     int dst[SZ], inq[SZ];
     bool spfa(){
-        memset(dst, 0x3f, sizeof dst);
-        memset(inq, 0, sizeof inq);
+        for(int i=0;i<SZ;i++) dst[i]=inf, inq[i]=0;
         queue<int> q; q.push(s); inq[s] = 1; dst[s] = 0;
         while(q.size()){
             int now = q.front(); q.pop(); inq[now] = 0;
@@ -22,19 +22,19 @@ struct MCMF{
                 }
             }
         }
-        return dst[t] < 1e9;
+        return dst[t] < inf;
     }
 
     int chk[SZ], work[SZ];
     bool update(){ //update shortest path DAG in O(V+E)
-        int mn = 1e9;
+        int mn = inf;
         for(int i=0; i<SZ; i++){
             if(!chk[i]) continue;
             for(auto j : g[i]){
                 if(j.c && !chk[j.v]) mn = min(mn, dst[i] + j.d - dst[j.v]);
             }
         }
-        if(mn >= 1e9) return 0;
+        if(mn >= inf) return 0;
         for(int i=0; i<SZ; i++){
             if(!chk[i]) dst[i] += mn;
         }
@@ -64,7 +64,7 @@ struct MCMF{
             memset(chk, 0, sizeof chk);
             memset(work, 0, sizeof work);
             int now = 0;
-            while(now = dfs(s, 1e9)){
+            while(now = dfs(s, inf)){
                 cst += dst[t] * now;
                 fl += now;
                 memset(chk, 0, sizeof chk);
